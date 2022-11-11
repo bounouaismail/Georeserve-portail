@@ -925,20 +925,20 @@ button:focus{
 	background-color: #cfa671;
 	border-color: #cfa671;
 }
-.blog-box{
+.Géoportail-box{
 	padding: 70px 0px;
 }
-.blog-box-inner{
+.Géoportail-box-inner{
 	position: relative;
 	margin-bottom: 30px;
 }
 
-.blog-box-inner .blog-img-box{
+.Géoportail-box-inner .Géoportail-img-box{
 	position: relative;
 	display: block;
 }
 
-.blog-box-inner .blog-detail{
+.Géoportail-box-inner .Géoportail-detail{
 	position: absolute;
 	top: 0;
 	background: #fff;
@@ -948,55 +948,55 @@ button:focus{
 	height: 100%;
 }
 
-.blog-detail h4 {
+.Géoportail-detail h4 {
     font-size: 18px;
     font-weight: 500;
     color: #222222;
 }
 
-.blog-detail ul li {
+.Géoportail-detail ul li {
     display: inline-block;
     padding: 0px 5px;
 }
-.blog-detail ul li span{
+.Géoportail-detail ul li span{
 	color: #d0a772;
 	cursor: pointer;
 }
-.blog-detail ul li span:hover{
+.Géoportail-detail ul li span:hover{
 	color: #010101;
 }
 
-.blog-detail ul li:first-child {
+.Géoportail-detail ul li:first-child {
     padding-left: 0px;
 }
 
-.blog-detail p {
+.Géoportail-detail p {
     padding: 10px 0px 0 0;
 	margin: 0px;
 }
 
-.blog-detail a{
+.Géoportail-detail a{
 	color: #d0a772;
 	margin-top: 20px;
 }
 
-.blog-box-inner .blog-detail:hover{
+.Géoportail-box-inner .Géoportail-detail:hover{
 	background: rgba(255, 255, 255, .9);
 }
 
-.blog-inner-box {
+.Géoportail-inner-box {
     position: relative;
     margin: 0px 10px;
     margin-bottom: 30px;
 }
-.side-blog-img {
+.side-Géoportail-img {
     box-shadow: -15px -15px 0px 0px rgba(0,0,0,0.4);
     -webkit-transition: all 1s ease 0.01s;
     transition: all 1s ease 0.01s;
     position: relative;
 }
 
-.date-blog-up {
+.date-Géoportail-up {
     position: absolute;
     right: 0px;
     top: 0px;
@@ -1005,26 +1005,26 @@ button:focus{
     color: #ffffff;
     padding: 5px 15px 5px 5px;
 }
-.inner-blog-detail {
+.inner-Géoportail-detail {
     background: #ffffff;
     position: relative;
     padding: 30px 20px;
 }
 
-.inner-blog-detail h3 {
+.inner-Géoportail-detail h3 {
     font-size: 20px;
     font-weight: 500;
     padding-bottom: 15px;
 }
-.inner-blog-detail ul li {
+.inner-Géoportail-detail ul li {
     display: inline-block;
     padding: 0px 5px;
     color: #222222;
 }
-.inner-blog-detail ul li span {
+.inner-Géoportail-detail ul li span {
     color: #cfa671;
 }
-.inner-blog-detail p {
+.inner-Géoportail-detail p {
     padding: 10px 0px;
 }
 .details-page blockquote {
@@ -1037,7 +1037,7 @@ blockquote {
     margin: 20px 0 20px;
     padding: 30px;
 }
-.blog-inner-details-line {
+.Géoportail-inner-details-line {
     margin: 20px 0px;
     clear: both;
     float: left;
@@ -1088,13 +1088,13 @@ blockquote {
     font-weight: 600;
     padding-bottom: 15px;
 }
-.blog-comment-box {
+.Géoportail-comment-box {
     clear: both;
     margin: 20px 0px;
     float: left;
     width: 100%;
 }
-.blog-comment-box h3 {
+.Géoportail-comment-box h3 {
     font-size: 18px;
     font-weight: 600;
     padding-bottom: 20px;
@@ -1145,7 +1145,7 @@ blockquote {
 .comment-respond-box {
     clear: both;
 }
-.blog-comment-box .children {
+.Géoportail-comment-box .children {
     margin-left: 70px;
 }
 .comment-item {
@@ -1180,18 +1180,18 @@ blockquote {
 	border-color: #cfa671;
 }
 
-.right-side-blog h3 {
+.right-side-Géoportail h3 {
     font-weight: 600;
     font-size: 18px;
     padding-bottom: 20px;
 }
-.blog-search-form {
+.Géoportail-search-form {
     position: relative;
     border-bottom: 1px solid #010101;
     padding-bottom: 30px;
     margin-bottom: 20px;
 }
-.blog-search-form input {
+.Géoportail-search-form input {
     width: 100%;
     min-height: 40px;
     border: 1px solid rgba(0,0,0,0.3);
@@ -1199,7 +1199,7 @@ blockquote {
     font-size: 15px;
     color: #222222;
 }
-.blog-search-form .search-btn {
+.Géoportail-search-form .search-btn {
     position: absolute;
     right: 0px;
     background: none;
@@ -1209,29 +1209,29 @@ blockquote {
     padding: 0px 15px;
 }
 
-.right-side-blog h3 {
+.right-side-Géoportail h3 {
     font-weight: 500;
     font-size: 18px;
     padding-bottom: 20px;
 }
-.blog-categories {
+.Géoportail-categories {
     padding-bottom: 30px;
     margin-bottom: 20px;
 }
-.blog-categories ul li {
+.Géoportail-categories ul li {
     line-height: 14px;
     padding: 10px 0px;
     border-top: 1px solid #f5f5f5;
 }
-.blog-categories ul li a {
+.Géoportail-categories ul li a {
     display: inline-block;
     text-transform: capitalize;
     width: 100%;
 }
-.blog-categories ul li a:hover{
+.Géoportail-categories ul li a:hover{
 	color: #cfa671;
 }
-.recent-box-blog {
+.recent-box-Géoportail {
     margin-bottom: 20px;
 	display: inline-block;
 }
@@ -1259,7 +1259,7 @@ blockquote {
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
 }
-.recent-box-blog:hover .recent-img::before {
+.recent-box-Géoportail:hover .recent-img::before {
     transform: scale(1);
     -webkit-transform: scale(1);
     -moz-transform: scale(1);
@@ -1283,18 +1283,18 @@ blockquote {
     margin: 11px 0px;
     font-weight: 500;
 }
-.blog-tag-box ul li {
+.Géoportail-tag-box ul li {
     display: inline-block;
     margin-bottom: 3px;
 }
-.blog-tag-box ul li a {
+.Géoportail-tag-box ul li a {
     padding: 5px 15px;
     display: block;
     background: #f5f5f5;
     color: #222222;
     border-radius: 6px;
 }
-.blog-tag-box ul li a:hover {
+.Géoportail-tag-box ul li a:hover {
     color: #ffffff;
     background: #cfa671;
 }
