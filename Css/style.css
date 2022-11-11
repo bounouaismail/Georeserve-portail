@@ -490,8 +490,15 @@ button:focus{
 }
 
 .carousel-inner .carousel-item .img-box{
-	width: 135px;
-	height: 135px;
+	width: 120px;
+	height: 120px;
+    ;
+}
+
+.carousel-inner .carousel-item .img-box .d-block{
+    width: 115px;
+	height: 110px;
+    border-radius: 40px;
 }
 .carousel-control-prev{
 	left: -100px;
@@ -510,7 +517,7 @@ button:focus{
 
 @media (min-width: 320px) and (max-width: 640px) {
 	.carousel-inner .carousel-item p{
-		font-size: 14px;
+		font-size: 13px;
 	}
 	.carousel-control-prev{
 		left: -5px;
