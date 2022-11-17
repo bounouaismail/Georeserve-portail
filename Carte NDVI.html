@@ -100,7 +100,7 @@
 		<div class="container text-center">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1>Carte des superficies</h1>
+					<h1>Carte NDVI</h1>
 				</div>
 			</div>
 		</div>
@@ -114,7 +114,7 @@
 				<div class="col-lg-12">
 					<div class="heading-title text-center">
                         <br>
-						<h2>Carte représentant les superficies des parcs nationaux :</h2>
+						<h2>Carte l'indice de végétation </h2>
                         <br>
 						<head>
 							<style>
@@ -128,30 +128,6 @@
 									width: 200px;
                                 
                                 }
-                                  .info {
-     padding: 6px 8px;
-     font: 14px/16px Arial, Helvetica, sans-serif;
-      background: white;
-     background: rgba(255,255,255,0.8);
-     box-shadow: 0 0 15px rgba(0,0,0,0.2);
-     border-radius: 5px;
-    }
-    .info h4 {
-     margin: 0 0 5px;
-     color: #777;
-   }
- 
-   .legend {
-     line-height: 18px;
-     color: #555;
-   }
- .legend i {
-     width: 18px;
-     height: 18px;
-     float: left;
-     margin-right: 8px;
-     opacity: 0.7;
-    }
 .map{
     display: block;
     margin-left: auto;
@@ -183,114 +159,8 @@
      }).addTo(map);
      
      L.geoJson(Parc_Nationaux).addTo(map);
- // Creation d'une fonction de couleur
- 
-  function getColor(i) {
-     return i > 1231 ? '#a50f15' :
-            i > 581  ? '#de2d26' :
-            i > 381  ? '#fb6a4a' :
-            i > 138  ? '#fcae91' :
-                       '#FEE5D9';
-  }
- //Creation d'une fonction style
-   function style(feature) {
-     return {
-         fillColor: getColor(feature.properties.Superficie),
-         weight: 2,
-         opacity: 1,
-         color: 'black',
-         dashArray: '1',
-         fillOpacity: 0.7
-     };
-  }
- 
-  L.geoJson(Parc_Nationaux, {style: style}).addTo(map);
- 
-  // Interaction
- 
-  function highlightFeature(e) {
-     var layer = e.target;
- 
-     layer.setStyle({
-         weight: 5,
-         color: '#666',
-         dashArray: '',
-         fillOpacity: 0.7
-     });
- 
-     layer.bringToFront();
-     info.update(layer.feature.properties);
- }
- 
- function resetHighlight(e) {
-     geojson.resetStyle(e.target);
-     info.update();
- }
- var geojson;
- // ... our listeners
- geojson = L.geoJson(Parc_Nationaux);
- 
- function zoomToFeature(e) {
-     map.fitBounds(e.target.getBounds());
- }
- 
- function onEachFeature(feature, layer) {
-     layer.on({
-         mouseover: highlightFeature,
-         mouseout: resetHighlight,
-         click: zoomToFeature
-     });
- }
- 
- geojson = L.geoJson(Parc_Nationaux, {
-     style: style,
-     onEachFeature: onEachFeature
- }).addTo(map);
- 
- //Affichage des informations
- 
- 
- var info = L.control();
- 
- info.onAdd = function (map) {
-     this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-     this.update();
-     return this._div;
- };
- 
- // method that we will use to update the control based on feature properties passed
- info.update = function (props) {
-     this._div.innerHTML = '<h4> <i>Superficie des parcs nationaux</i> </h4>' +  (props ?
-         '<b>' + props.Nom + '</b><br />' + props.Superficie + 'km²'
-         : 'Passer la souris sur un parc national');
- };
- info.addTo(map);
- 
- //Definition d'une légende
- 
- var legend = L.control({position: 'bottomright'});
- 
- legend.onAdd = function (map) {
-     
-     var div = L.DomUtil.create('div', 'info legend'),
-         grades = [100,138, 381, 581, 1231],
-         labels = [];
- 
- 
-     div.innerHTML += '<h6>Légende</h6>';
-     for (var i = 0; i < grades.length; i++) {
-         div.innerHTML +=
-             '<i style="background:' + getColor((grades[i] + 1) ) + '"></i> ' +
-             grades[i] + (grades[i + 1] ? '-' + grades[i + 1] + 'km² <br>' : '+');
-      }
-     
- 
-     return div;
- };
- 
-  legend.addTo(map);
-  var zoomHome = L.Control.zoomHome();
-  zoomHome.addTo(map);
+     var zoomHome = L.Control.zoomHome();
+     zoomHome.addTo(map);
      </script>
 <!-- ALL JS FILES -->
 	<script src="js/jquery-3.2.1.min.js"></script>
