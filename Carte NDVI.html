@@ -50,15 +50,10 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="Css/leaflet.css"/>
     <script src="Js/leaflet.js"></script>
-    <link rel="stylesheet" href="Css/leaflet.zoomhome.css"/>
-    <script src="Js/leaflet.zoomhome.min.js"></script>
 	<!-- Load Leaflet from CDN -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" crossorigin=""></script>
-
-    <!-- Load Esri Leaflet from CDN -->
-    <script src="https://unpkg.com/esri-leaflet@^3.0.8/dist/esri-leaflet.js"></script>
-    <script src="https://unpkg.com/esri-leaflet-vector@4.0.0/dist/esri-leaflet-vector.js"></script>
+    
 
 
     <!--[if lt IE 9]>
@@ -144,40 +139,194 @@
     height: 200px;
 }
 
+.legend {
+  padding: 6px 8px;
+  font: 14px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255, 255, 255, 0.8);
+  /*box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);*/
+  /*border-radius: 5px;*/
+  line-height: 20px;
+  color: #555;
+}
+.legend h4 {
+  text-align: left;
+  font-size: 16px;
+  margin: 2px 12px 8px;
+  color: #777;
+}
+.info {
+     padding: 6px 8px;
+     font: 14px/16px Arial, Helvetica, sans-serif;
+      background: white;
+     background: rgba(255,255,255,0.8);
+     box-shadow: 0 0 15px rgba(0,0,0,0.2);
+     border-radius: 5px;
+    }
 
-</style>
+.info h4 {
+     margin: 0 0 5px;
+     color: #777;
+   }
 
+.legend span {
+  position: relative;
+  bottom: 3px;
+}
+
+.legend i {
+  width: 20px;
+  height: 20px;
+  float: left;
+  margin: 0 8px 0 0;
+  opacity: 0.7;
+}
+#map{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 150px;
+    font-size: 20px
+}
+ </style>
 </head>
  
-
- <body>
+<body>
  
  <div id="map" class="map" style="width: 600px; height: 400px;"></div>
  
  <script type="text/javascript" src="Parc_Geojson/Parc_Nationaux.geojson"> </script>
  <script type="text/javascript" src="Parc_Geojson/morocco.geojson"> </script>
+ <script src="https://unpkg.com/georaster"></script>
+ <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
+ <script src="https://unpkg.com/proj4"></script>
+ <link rel="stylesheet" href="Css/leaflet.zoomhome.css"/>
+ <script src="Js/leaflet.zoomhome.min.js"></script>
  <script type="text/javascript">
- 
  //L'ajout de basemap et de la couche des parcs nationaux
-   const map = L.map('map',{zoomControl: false}).setView([31.912812064746657, -6.271781715807906],6);
+ var map = L.map('map',{zoomControl: false}).setView([31.912812064746657, -6.271781715807906],6);
 
-    const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-         maxZoom: 19,
-         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-     }).addTo(map);
-	var myStyle = {
+// add OpenStreetMap basemap
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+var url_to_geotiff_file = "https://mrbourriz.github.io/Images-parc.tif/parcs.tif";
+
+fetch(url_to_geotiff_file)
+  .then(response => response.arrayBuffer())
+  .then(arrayBuffer => {
+	parseGeoraster(arrayBuffer).then(georaster => {
+	  console.log("georaster:", georaster);
+
+	  /*
+		  GeoRasterLayer is an extension of GridLayer,
+		  which means can use GridLayer options like opacity.
+		  Just make sure to include the georaster option!
+		  http://leafletjs.com/reference-1.2.0.html#gridlayer
+	  */
+	  var layer = new GeoRasterLayer({
+		  georaster: georaster,
+		  opacity: 0.9
+	  });
+	  layer.addTo(map);
+
+	  map.fitBounds(layer.getBounds());
+
+  });
+});
+
+var myStyle = {
     "color": "Black",
     "weight": 5,
     "opacity": 1,
-    "fill":"Black",
+}
+
+L.geoJson(Parc_Nationaux,{
+  style: myStyle
+}).addTo(map);
+//Interaction
+
+function highlightFeature(e) {
+     var layer_interaction = e.target;
+ 
+     layer_interaction.setStyle({
+         weight: 5,
+         color: '#666',
+         dashArray: '',
+         fillOpacity: 0.7
+     });
+ 
+     layer_interaction.bringToFront();
+	 info.update(layer_interaction.feature.properties);
+ }
+ 
+ function resetHighlight(e) {
+     geojson.resetStyle(e.target);
+	 info.update();
+ }
+ var geojson;
+ // ... our listeners
+ geojson = L.geoJson(Parc_Nationaux);
+ 
+ function zoomToFeature(e) {
+     map.fitBounds(e.target.getBounds());
+ }
+ 
+ function onEachFeature(feature, layer_interaction) {
+     layer_interaction.on({
+         mouseover: highlightFeature,
+         mouseout: resetHighlight,
+         click: zoomToFeature
+     });
+ }
+ 
+ geojson = L.geoJson(Parc_Nationaux, {
+      onEachFeature: onEachFeature
+ }).addTo(map);
+
+//Affichage des informations
+
+var info = L.control();
+ 
+ info.onAdd = function (map) {
+     this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+     this.update();
+     return this._div;
+ };
+ 
+ // method that we will use to update the control based on feature properties passed
+ info.update = function (props) {
+     this._div.innerHTML = '<h4> <i>Nom des parcs nationaux</i> </h4>' +  (props ?
+         '<b>' + props.Nom + '</b><br />'
+         : 'Passer la souris sur un parc national');
+ };
+ info.addTo(map);
+
+//Legende
+
+var legend = L.control({ position: "bottomright" });
+
+legend.onAdd = function(map) {
+  var div = L.DomUtil.create("div", "legend");
+  div.innerHTML += "<h4>NDVI</h4>";
+  div.innerHTML += '<i style="background: #FFFFFF"></i><span>-1</span><br>';
+  div.innerHTML += '<i style="background: #DDDDDD"></i><span></span><br>';
+  div.innerHTML += '<i style="background: #929292"></i><span></span><br>';
+  div.innerHTML += '<i style="background: #929292"></i><span></span><br>';
+  div.innerHTML += '<i style="background: #737373"></i><span></span><br>';
+  div.innerHTML += '<i style="background: #000000 "></i><span>1</span><br>';
+  return div;
 };
-   L.geoJson(morocco,{
-    style: myStyle
-    }).addTo(map);
-     
-    L.geoJson(Parc_Nationaux).addTo(map);
-    var zoomHome = L.Control.zoomHome();
-    zoomHome.addTo(map);
+legend.addTo(map);
+
+//Zoom
+
+var zoomHome = L.Control.zoomHome();
+zoomHome.addTo(map);
+
+
   </script>
 <!-- ALL JS FILES -->
 	<script src="js/jquery-3.2.1.min.js"></script>
