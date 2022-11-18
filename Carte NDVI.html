@@ -52,6 +52,13 @@
     <script src="Js/leaflet.js"></script>
     <link rel="stylesheet" href="Css/leaflet.zoomhome.css"/>
     <script src="Js/leaflet.zoomhome.min.js"></script>
+	<!-- Load Leaflet from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" crossorigin=""></script>
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@^3.0.8/dist/esri-leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet-vector@4.0.0/dist/esri-leaflet-vector.js"></script>
 
 
     <!--[if lt IE 9]>
@@ -114,7 +121,7 @@
 				<div class="col-lg-12">
 					<div class="heading-title text-center">
                         <br>
-						<h2>Carte l'indice de végétation </h2>
+						<h2>Carte d'indice de végétation </h2>
                         <br>
 						<head>
 							<style>
@@ -148,20 +155,30 @@
  <div id="map" class="map" style="width: 600px; height: 400px;"></div>
  
  <script type="text/javascript" src="Parc_Geojson/Parc_Nationaux.geojson"> </script>
+ <script type="text/javascript" src="Parc_Geojson/morocco.geojson"> </script>
  <script type="text/javascript">
  
  //L'ajout de basemap et de la couche des parcs nationaux
    const map = L.map('map',{zoomControl: false}).setView([31.912812064746657, -6.271781715807906],6);
- 
-     const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+    const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
          maxZoom: 19,
          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
      }).addTo(map);
+	var myStyle = {
+    "color": "Black",
+    "weight": 5,
+    "opacity": 1,
+    "fill":"Black",
+};
+   L.geoJson(morocco,{
+    style: myStyle
+    }).addTo(map);
      
-     L.geoJson(Parc_Nationaux).addTo(map);
-     var zoomHome = L.Control.zoomHome();
-     zoomHome.addTo(map);
-     </script>
+    L.geoJson(Parc_Nationaux).addTo(map);
+    var zoomHome = L.Control.zoomHome();
+    zoomHome.addTo(map);
+  </script>
 <!-- ALL JS FILES -->
 	<script src="js/jquery-3.2.1.min.js"></script>
 	<script src="js/popper.min.js"></script>

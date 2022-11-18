@@ -170,6 +170,7 @@
  <div id="map" class="map" style="width: 600px; height: 400px;"></div>
  
  <script type="text/javascript" src="Parc_Geojson/Parc_Nationaux.geojson"> </script>
+ <script type="text/javascript" src="Parc_Geojson/morocco.geojson"> </script>
  <script type="text/javascript">
  
  //L'ajout de basemap et de la couche des parcs nationaux
@@ -179,6 +180,15 @@
          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
      }).addTo(map);
 
+     var myStyle = {
+    "color": "Black",
+    "weight": 5,
+    "opacity": 1,
+    "fill":"Black",
+};
+   L.geoJson(morocco,{
+    style: myStyle
+    }).addTo(map);
    L.geoJson(Parc_Nationaux).addTo(map);
 
  // Creation d'une fonction de couleur
