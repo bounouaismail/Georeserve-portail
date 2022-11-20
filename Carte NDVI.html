@@ -186,6 +186,8 @@
   opacity: 0.7;
 }
 #map{
+   height: 500px ;
+    width: 1000px;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -197,7 +199,7 @@
  
 <body>
  
- <div id="map" class="map" style="width: 600px; height: 400px;"></div>
+ <div id="map" class="map" ></div>
  
  <script type="text/javascript" src="Parc_Geojson/Parc_Nationaux.geojson"> </script>
  <script type="text/javascript" src="Parc_Geojson/morocco.geojson"> </script>
@@ -208,7 +210,7 @@
  <script src="Js/leaflet.zoomhome.min.js"></script>
  <script type="text/javascript">
  //L'ajout de basemap et de la couche des parcs nationaux
- var map = L.map('map',{zoomControl: false}).setView([31.912812064746657, -6.271781715807906],6);
+ var map = L.map('map',{zoomControl: false}).setView([29.638933, -9.665423], 5);
 
 // add OpenStreetMap basemap
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -345,7 +347,8 @@ zoomHome.addTo(map);
 	<script src="js/picker.time.js"></script>
 	<script src="js/legacy.js"></script>
 	<script src="js/form-validator.min.js"></script>
-    <script src="js/contact-form-script.js"></script>
-    <script src="js/custom.js"></script>
+  <script src="js/contact-form-script.js"></script>
+  <script src="js/custom.js"></script>
+  <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
  </body>
 </html>
