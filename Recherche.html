@@ -165,9 +165,80 @@
         }});
 
       Maroc.addTo(map);
+// Creation du selecteur SQL
 
        L.control.layers(basemapLayers, null, { collapsed: false }).addTo(map);
-	   
+	   //Ajout d'un controleur
+	   L.Control.QueryControl = L.Control.extend({
+        onAdd: function (map) {
+          const whereClauses = [
+            "Cherchez...",
+            "Superficie > 1000",
+            "Superficie < 1000",
+            "Note > 4.4",
+            "Note < 4.4",
+            "Creation > 2000",
+            "Creation < 2000"
+          ];
+		//Creation de select
+
+		const select = L.DomUtil.create("select", "");
+          select.setAttribute("id", "whereClauseSelect");
+          select.setAttribute("style", "font-size: 16px;padding:4px 8px;");
+          whereClauses.forEach(function (whereClause) {
+            let option = L.DomUtil.create("option");
+            option.innerHTML = whereClause;
+            select.appendChild(option);
+          });
+          return select;
+
+        },
+
+        onRemove: function (map) {
+          // Nothing to do here
+        }
+      });
+	  
+	  L.control.queryControl = function (opts) {
+        return new L.Control.QueryControl(opts);
+      };
+
+      L.control
+        .queryControl({
+          position: "topright"
+        })
+        .addTo(map);
+//Ajout des Features
+
+const parc = L.esri
+        .featureLayer({
+          url: "https://services6.arcgis.com/f4ktY2fh4AlEsjcx/arcgis/rest/services/parc/FeatureServer/0",
+
+          simplifyFactor: 0.5,
+          precision: 4,
+		  style: {
+            color: "#FF0000",
+            weight: 3
+		  },
+		  //Apparition des features juste lors de la requete
+		where: "1 = 0"
+        })
+        .addTo(map);
+//Execution de la requete
+const select = document.getElementById("whereClauseSelect");
+      select.addEventListener("change", () => {
+        if (select.value !== "") {
+          parc.setWhere(select.value);
+        }
+      });
+
+
+//Pop up
+parc.bindPopup(function (layer) {
+          return L.Util.template("<b>Nom {Nom}</b> <br>"+ "Creation: {Creation} <br>" + "Superficie: {Superficie} km² <br> "+"Note: {Note}/5", layer.feature.properties);
+      });
+
+
 	   </script>
 							  
 	<a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
