@@ -224,6 +224,7 @@ const parc = L.esri
 		where: "1 = 0"
         })
         .addTo(map);
+
 //Execution de la requete
 const select = document.getElementById("whereClauseSelect");
       select.addEventListener("change", () => {
@@ -231,8 +232,7 @@ const select = document.getElementById("whereClauseSelect");
           parc.setWhere(select.value);
         }
       });
-
-
+  
 //Pop up
 parc.bindPopup(function (layer) {
           return L.Util.template("<b>Nom {Nom}</b> <br>"+ "Creation: {Creation} <br>" + "Superficie: {Superficie} km² <br> "+"Note: {Note}/5", layer.feature.properties);
