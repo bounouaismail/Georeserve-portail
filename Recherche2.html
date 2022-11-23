@@ -144,6 +144,20 @@
 					
 						    <body>
 								<div id="map" class="map"></div>
+								<div id="panel" class="leaflet-bar">
+									Parc National de Toubkal
+									<select name="relation" id="relationSelect">
+									  <option value="within">Within<options>
+									  <option value="contains">Contains<options>
+									  <option value="intersects">Intersects<options>
+									  <option value="overlaps">Overlaps<options>
+									</select>
+									<select name="geometry" id="geometrySelect">
+									  <option value="point">Point<options>
+									  <option value="line">Line<options>
+									</select>
+									<button id="executeQuery">Run Query</button>
+								  </div>
 							  <script>
 
 								const map = L.map("map", {minZoom: 5}).setView([31.061762211372717, -7.914919899573209], 11);
@@ -162,59 +176,71 @@
             weight: 5
         }});
 
-      Maroc.addTo(map);
-
-      var Circuit = L.esri
-        .featureLayer({
-          url: "https://services6.arcgis.com/f4ktY2fh4AlEsjcx/arcgis/rest/services/circuit/FeatureServer/0",
-		  style: {
-            color: "#f7230c",
-            weight: 5
-        }});
-
-      Circuit.addTo(map);
-
-      var Lac = L.esri
-        .featureLayer({
-          url: "https://services6.arcgis.com/f4ktY2fh4AlEsjcx/arcgis/rest/services/lac_ifni/FeatureServer/0",
-		  style: {
-            color: "#0059FF",
-            weight: 5
-        }});
-
-      Lac.addTo(map);
-
-      var Auberge = L.esri
-        .featureLayer({
-          url: "https://services6.arcgis.com/f4ktY2fh4AlEsjcx/arcgis/rest/services/auberge/FeatureServer/0",
-		  style: {
-            color: "#FFFFFF",
-            weight: 5
-        }});
-
-      Auberge.addTo(map);
-
-var Site_touristique = L.esri
-        .featureLayer({
-          url: "https://services6.arcgis.com/f4ktY2fh4AlEsjcx/arcgis/rest/services/site_touristique/FeatureServer/0",
-		  style: {
-            color: "#FFFFFF",
-            weight: 5
-        }});
-        
-Site_touristique.addTo(map);
-
 var Toubkal = L.esri
         .featureLayer({
           url: "https://services6.arcgis.com/f4ktY2fh4AlEsjcx/arcgis/rest/services/toubkal/FeatureServer/0",
 		  style: {
-            color: "#FFFFFF",
+            color: "#000000",
             weight: 5
         }});
         
 Toubkal.addTo(map);
 
-	   </script>
+const sommet = L.marker([31.060090584371125, -7.914748488270757 ]).addTo(map);
+
+const line = L.polyline([ // Create a line to query against
+        [31.131,-7.916],
+        [31.131,-7.916],
+		[31.130,-7.916],
+		[31.129,-7.915],
+		[31.130,-7.915],
+		[31.130,-7.914],
+		[31.130,-7.915],
+		[31.129,-7.914],
+		[31.129,-7.913],
+		[31.128,-7.913],
+		[31.128,-7.912],
+      ], {
+        color: 'blue',
+        weight: 2
+      }).addTo(map);
+
+	  const geometries = {
+        line: line,
+        point: sommet
+      };
+	  const relationship = document.getElementById('relationSelect');
+      const geometry = document.getElementById('geometrySelect');
+      const runQueryButton = document.getElementById('executeQuery');
+      let previousIds = [];
+
+      function reset () {  // Reset all features back to their regularly defined styles
+        for (let i = previousIds.length - 1; i >= 0; i--) {
+          Toubkal.resetStyle(previousIds[i]);
+        }
+    }
+
+      function query () {
+        reset();
+        const inputGeometry = geometries[geometry.value];
+        Toubkal.query()[relationship.value](inputGeometry).ids(function (error, ids) {
+          if (error) {
+            console.log('Error with query: ' + error);
+          } else if (ids) {
+            previousIds = ids;
+            for (let i = ids.length - 1; i >= 0; i--) {
+              Toubkal.setFeatureStyle(ids[i], { color: 'red', weight: 2 });
+            }
+          }
+        });
+      }
+
+      runQueryButton.addEventListener('click', query);
+
+      Toubkal.once('load', function () {
+        query();
+	  });
+</script>
 							  
 	<a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
 
