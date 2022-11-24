@@ -97,6 +97,7 @@
 							<div class="dropdown-menu" aria-labelledby="dropdown-a">
 								<a class="dropdown-item" href="Recherche.html">Attributaires</a>
 								<a class="dropdown-item" href="Recherche2.html">Spatiales</a>
+								<a class="dropdown-item" href="Recherche2.html">Itinéraire</a>
 							</div>
 						</li>
 							<li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
@@ -139,12 +140,20 @@
                                   margin-right: auto;
 								  padding: 100px
 								}
+								#panel {
+									position: absolute;
+    top: 5%;
+    left: 50%;
+	background: white;
+    transform: translateX(-50%) translateY(-50%);
+	padding: 4px;
+        }
 							  </style>
                          </head>
 					
 						    <body>
 								<div id="map" class="map"></div>
-								<div id="panel" class="leaflet-bar">
+								<div id="panel" class="leaflet-bar" >
 									Parc National de Toubkal
 									<select name="relation" id="relationSelect">
 									  <option value="within">Within<options>
@@ -153,8 +162,9 @@
 									  <option value="overlaps">Overlaps<options>
 									</select>
 									<select name="geometry" id="geometrySelect">
-									  <option value="point">Point<options>
-									  <option value="line">Line<options>
+									  <option value="point">Djbel Toubkal<options>
+									  <option value="line">Route N°2030<options>
+									  <option value="polygon">Ifni<options>
 									</select>
 									<button id="executeQuery">Run Query</button>
 								  </div>
@@ -162,10 +172,7 @@
 
 								const map = L.map("map", {minZoom: 5}).setView([31.061762211372717, -7.914919899573209], 11);
 								const apiKey = "AAPK22b2239330f348e6856b49ba92d3aa36l-qSfkzwWqJOSvuCHty6k4cDtOREFtSJoPiRlta-1uwftZL9sBYHbKzcDXjD4ZK5";
-								const basemapLayers = {Streets: L.esri.Vector.vectorBasemapLayer("ArcGIS:Streets", { apiKey: apiKey }).addTo(map),
-	
-        Topographic: L.esri.Vector.vectorBasemapLayer("ArcGIS:Topographic", { apiKey: apiKey }),
-		Imagery: L.esri.Vector.vectorBasemapLayer("ArcGIS:Imagery", { apiKey: apiKey })
+								const basemapLayers = {Streets: L.esri.Vector.vectorBasemapLayer("ArcGIS:Topographic", { apiKey: apiKey }).addTo(map)
 
       };
 	  var Maroc = L.esri
@@ -186,28 +193,53 @@ var Toubkal = L.esri
         
 Toubkal.addTo(map);
 
-const sommet = L.marker([31.060090584371125, -7.914748488270757 ]).addTo(map);
+const icon = L.icon({
+        iconUrl: "https://mrbourriz.github.io/Sommet.png/mountain.png",
+        iconSize: [27, 31],
+        iconAnchor: [13.5, 17.5],
+        popupAnchor: [0, -11]
+      });
 
-const line = L.polyline([ // Create a line to query against
-        [31.131,-7.916],
-        [31.131,-7.916],
-		[31.130,-7.916],
-		[31.129,-7.915],
-		[31.130,-7.915],
-		[31.130,-7.914],
-		[31.130,-7.915],
-		[31.129,-7.914],
-		[31.129,-7.913],
-		[31.128,-7.913],
-		[31.128,-7.912],
+
+const Sommet = L.marker([31.060090584371125, -7.914748488270757 ], {icon: icon}).addTo(map);
+
+const Route = L.polyline([ // Create a line to query against
+        [31.138,-7.917],
+        [31.132,-7.921],
+		[31.124,-7.920],
+		[31.123,-7.920],
+		[31.117,-7.920],
+		[31.116,-7.920],
+		[31.111,-7.919],
+		[31.107,-7.916]
       ], {
-        color: 'blue',
-        weight: 2
+        color: 'red',
+        weight: 3
       }).addTo(map);
 
+	  const Ifni = L.polygon([ // Create a polygon to query against
+        [31.028, -7.888],
+        [31.029, -7.888],
+        [31.032, -7.888],
+        [31.032, -7.887],
+		[31.033, -7.885],
+		[31.033, -7.880],
+		[31.033, -7.879],
+		[31.031, -7.880],
+		[31.030, -7.881],
+		[31.029, -7.883],
+		[31.029, -7.884],
+		[31.028, -7.888],
+		[31.028, -7.888]
+      ], {
+        color: 'blue',
+        weight: 5
+      }).addTo(map);
 	  const geometries = {
-        line: line,
-        point: sommet
+        line: Route,
+        point: Sommet,
+		polygon: Ifni
+
       };
 	  const relationship = document.getElementById('relationSelect');
       const geometry = document.getElementById('geometrySelect');
@@ -229,9 +261,9 @@ const line = L.polyline([ // Create a line to query against
           } else if (ids) {
             previousIds = ids;
             for (let i = ids.length - 1; i >= 0; i--) {
-              Toubkal.setFeatureStyle(ids[i], { color: 'red', weight: 2 });
+              Toubkal.setFeatureStyle(ids[i], { color: 'green', weight: 4 });
             }
-          }
+          } 
         });
       }
 
