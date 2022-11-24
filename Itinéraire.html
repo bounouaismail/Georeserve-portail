@@ -59,6 +59,9 @@
 	 <!-- Load Esri Leaflet from CDN -->
 	 <script src="https://unpkg.com/esri-leaflet@^3.0.8/dist/esri-leaflet.js"></script>
 	 <script src="https://unpkg.com/esri-leaflet-vector@4.0.0/dist/esri-leaflet-vector.js"></script>
+       <!-- Load ArcGIS REST JS from CDN -->
+    <script src="https://unpkg.com/@esri/arcgis-rest-request@4.0.0/dist/bundled/request.umd.js"></script>
+    <script src="https://unpkg.com/@esri/arcgis-rest-routing@4.0.0/dist/bundled/routing.umd.js"></script>
 
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -113,7 +116,7 @@
 		<div class="container text-center">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1>Recherche</h1>
+					<h1>Itinéraire</h1>
 					<br><br>
 				</div>
 			</div>
@@ -139,139 +142,130 @@
                                   margin-left: auto;
                                   margin-right: auto;
 								  padding: 100px
-								}
-								#panel {
-									position: absolute;
-    top: 5%;
-    left: 50%;
-	background: white;
-    transform: translateX(-50%) translateY(-50%);
-	padding: 4px;
-        }
+                                }
+
+                                #directions {
+        position: absolute;
+        z-index: 1000;
+        width: 30%;
+        max-height: 50%;
+        right: 20px;
+        top: 20px;
+        overflow-y: auto; /* Show a scrollbar if needed */
+        background: white;
+        font-family: Arial, Helvetica, Verdana;
+        line-height: 1.5;
+        font-size: 14px;
+        padding: 10px;}
 							  </style>
                          </head>
 					
 						    <body>
 								<div id="map" class="map"></div>
-								<div id="panel" class="leaflet-bar" >
-									Parc National de Toubkal
-									<select name="relation" id="relationSelect">
-									  <option value="within">Within<options>
-									  <option value="contains">Contains<options>
-									  <option value="intersects">Intersects<options>
-									  <option value="overlaps">Overlaps<options>
-									</select>
-									<select name="geometry" id="geometrySelect">
-									  <option value="point">Djbel Toubkal<options>
-									  <option value="line">Route N°2030<options>
-									  <option value="polygon">Ifni<options>
-									</select>
-									<button id="executeQuery">Run Query</button>
-								  </div>
 							  <script>
+    const map = L.map("map", {
+        minZoom: 2
+      })
 
-								const map = L.map("map", {minZoom: 5}).setView([31.061762211372717, -7.914919899573209], 11);
-								const apiKey = "AAPK22b2239330f348e6856b49ba92d3aa36l-qSfkzwWqJOSvuCHty6k4cDtOREFtSJoPiRlta-1uwftZL9sBYHbKzcDXjD4ZK5";
-								const basemapLayers = {Streets: L.esri.Vector.vectorBasemapLayer("ArcGIS:Topographic", { apiKey: apiKey }).addTo(map)
+      map.setView([29.638933, -9.665423], 5);
 
-      };
-	  var Maroc = L.esri
+      const apiKey = "AAPK22b2239330f348e6856b49ba92d3aa36l-qSfkzwWqJOSvuCHty6k4cDtOREFtSJoPiRlta-1uwftZL9sBYHbKzcDXjD4ZK5";
+
+      const basemapEnum ="ArcGIS:Navigation";
+
+      L.esri.Vector.vectorBasemapLayer(basemapEnum, {
+        apiKey: apiKey
+      }).addTo(map);
+
+    var Maroc = L.esri
         .featureLayer({
           url: "https://services6.arcgis.com/f4ktY2fh4AlEsjcx/arcgis/rest/services/maroc/FeatureServer/0",
 		  style: {
             color: "#000000",
             weight: 5
         }});
+        Maroc.addTo(map);
 
-var Toubkal = L.esri
+    var Parc = L.esri
         .featureLayer({
-          url: "https://services6.arcgis.com/f4ktY2fh4AlEsjcx/arcgis/rest/services/toubkal/FeatureServer/0",
+          url: "https://services6.arcgis.com/f4ktY2fh4AlEsjcx/arcgis/rest/services/parc/FeatureServer/0",
 		  style: {
-            color: "#000000",
+            color: "#FFFFFF",
             weight: 5
         }});
-        
-Toubkal.addTo(map);
+        Parc.addTo(map);
 
-const icon = L.icon({
-        iconUrl: "https://mrbourriz.github.io/Sommet.png/mountain.png",
-        iconSize: [27, 31],
-        iconAnchor: [13.5, 17.5],
-        popupAnchor: [0, -11]
-      });
+const directions = document.createElement("div");
+directions.id = "directions";
+directions.innerHTML = "Click on the map to create a start and end for the route.";
+document.body.appendChild(directions);
 
+const startLayerGroup = L.layerGroup().addTo(map);
+const endLayerGroup = L.layerGroup().addTo(map);
 
-const Sommet = L.marker([31.060090584371125, -7.914748488270757 ], {icon: icon}).addTo(map);
+const routeLines = L.layerGroup().addTo(map);
 
-const Route = L.polyline([ // Create a line to query against
-        [31.138,-7.917],
-        [31.132,-7.921],
-		[31.124,-7.920],
-		[31.123,-7.920],
-		[31.117,-7.920],
-		[31.116,-7.920],
-		[31.111,-7.919],
-		[31.107,-7.916]
-      ], {
-        color: 'red',
-        weight: 3
-      }).addTo(map);
+let currentStep = "start";
+let startCoords, endCoords;
 
-	  const Ifni = L.polygon([ // Create a polygon to query against
-        [31.028, -7.888],
-        [31.029, -7.888],
-        [31.032, -7.888],
-        [31.032, -7.887],
-		[31.033, -7.885],
-		[31.033, -7.880],
-		[31.033, -7.879],
-		[31.031, -7.880],
-		[31.030, -7.881],
-		[31.029, -7.883],
-		[31.029, -7.884],
-		[31.028, -7.888],
-		[31.028, -7.888]
-      ], {
-        color: 'blue',
-        weight: 5
-      }).addTo(map);
-	  const geometries = {
-        line: Route,
-        point: Sommet,
-		polygon: Ifni
+function updateRoute() {
+  // Create the arcgis-rest-js authentication object to use later.
+  const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
 
-      };
-	  const relationship = document.getElementById('relationSelect');
-      const geometry = document.getElementById('geometrySelect');
-      const runQueryButton = document.getElementById('executeQuery');
-      let previousIds = [];
+  // make the API request
+  arcgisRest
+    .solveRoute({
+      stops: [startCoords, endCoords],
+      endpoint: "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve",
+      authentication
+    })
 
-      function reset () {  // Reset all features back to their regularly defined styles
-        for (let i = previousIds.length - 1; i >= 0; i--) {
-          Toubkal.resetStyle(previousIds[i]);
-        }
-    }
+    .then((response) => {
 
-      function query () {
-        reset();
-        const inputGeometry = geometries[geometry.value];
-        Toubkal.query()[relationship.value](inputGeometry).ids(function (error, ids) {
-          if (error) {
-            console.log('Error with query: ' + error);
-          } else if (ids) {
-            previousIds = ids;
-            for (let i = ids.length - 1; i >= 0; i--) {
-              Toubkal.setFeatureStyle(ids[i], { color: 'green', weight: 4 });
-            }
-          } 
-        });
-      }
+      routeLines.clearLayers();
+      L.geoJSON(response.routes.geoJson).addTo(routeLines);
 
-      runQueryButton.addEventListener('click', query);
+      const directionsHTML = response.directions[0].features.map((f) => f.attributes.text).join("<br/>");
+      directions.innerHTML = directionsHTML;
+      startCoords = null;
+      endCoords = null;
 
-      Toubkal.once('load', function () {
-        query();
-	  });
+    })
+
+    .catch((error) => {
+      console.error(error);
+      alert("There was a problem using the route service. See the console for details.");
+    });
+
+}
+
+map.on("click", (e) => {
+  const coordinates = [e.latlng.lng, e.latlng.lat];
+
+  if (currentStep === "start") {
+
+    startLayerGroup.clearLayers();
+    endLayerGroup.clearLayers();
+    routeLines.clearLayers();
+
+    L.marker(e.latlng).addTo(startLayerGroup);
+    startCoords = coordinates;
+
+    currentStep = "end";
+  } else {
+
+    L.marker(e.latlng).addTo(endLayerGroup);
+    endCoords = coordinates;
+
+    currentStep = "start";
+  }
+
+  if (startCoords && endCoords) {
+    updateRoute();
+  }
+
+});
+
 </script>
 							  
 	<a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
